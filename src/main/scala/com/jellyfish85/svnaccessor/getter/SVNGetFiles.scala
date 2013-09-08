@@ -9,6 +9,13 @@ import org.apache.commons.io.FileUtils
 
 class SVNGetFiles {
 
+  /**
+   * == Over View ==
+   *
+   * @param list
+   * @param folder
+   * @throws org.tmatesoft.svn.core.SVNException
+   */
   @throws(classOf[SVNException])
   def simpleGetFiles(list: List[SVNRequestBean], folder: File) {
     FileUtils.cleanDirectory(folder)
