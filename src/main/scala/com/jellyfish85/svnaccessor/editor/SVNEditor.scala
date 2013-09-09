@@ -172,12 +172,13 @@ class SVNEditor {
 
         } else {
 
-          editor.addFile(entry.path, null, -1)
+          editor.openDir(entry.path.replace(entry.fileName, ""), -1L)
+          editor.addFile(entry.path, null, -1L)
           editor.applyTextDelta(entry.path, null)
           val deltaGenerator: SVNDeltaGenerator = new SVNDeltaGenerator()
           val checksum: String = deltaGenerator.sendDelta(entry.path, new ByteArrayInputStream(entry.fileData), editor, true)
           editor.textDeltaEnd(entry.path)
-          editor.closeFile(entry.path, checksum)
+          editor.closeFile(entry.fileName, checksum)
         }
       }
 
