@@ -1,4 +1,4 @@
-package com.jellyfish85.com.svnaccessor.editor
+package com.jellyfish85.svnaccessor.editor
 
 import org.tmatesoft.svn.core.io.{ISVNEditor, SVNRepository}
 import org.tmatesoft.svn.core.{SVNProperties, SVNCommitInfo, SVNException, SVNNodeKind}
