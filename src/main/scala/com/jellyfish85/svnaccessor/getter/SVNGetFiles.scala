@@ -5,7 +5,8 @@ import com.jellyfish85.svnaccessor.bean.SVNRequestBean
 import java.io.{FileOutputStream, ByteArrayOutputStream, File}
 import org.tmatesoft.svn.core.io.SVNRepository
 import org.tmatesoft.svn.core.{SVNNodeKind, SVNDirEntry, SVNException, SVNProperties}
-import org.apache.commons.io.FileUtils
+import org.apache.commons.io.{FilenameUtils, FileUtils}
+import org.apache.commons.io.filefilter.DirectoryFileFilter
 
 /**
  * == Over View ==
@@ -47,6 +48,52 @@ class SVNGetFiles {
       }
 
       val fos: FileOutputStream = new FileOutputStream(new File(folder.getPath, entity.fileName))
+      fos.write(data)
+      fos.close()
+
+    }
+  }
+
+  /**
+   * == Over View ==
+   *
+   * download svn files by using list of bean
+   *
+   * @param list
+   * @param folder
+   * @throws org.tmatesoft.svn.core.SVNException
+   */
+  @throws(classOf[SVNException])
+  def simpleGetFilesWithDirectory(list: List[SVNRequestBean], folder: File) {
+    FileUtils.cleanDirectory(folder)
+
+    val manager   : SVNManager     = new SVNManager
+    val repository: SVNRepository  = manager.repository
+
+    list.foreach {entity: SVNRequestBean =>
+      val out: ByteArrayOutputStream = new ByteArrayOutputStream()
+      println(entity.path)
+      repository.getFile(
+        entity.path,
+        entity.revision,
+        SVNProperties.wrap(java.util.Collections.EMPTY_MAP),
+        out
+      )
+
+      val data: Array[scala.Byte] = out.toByteArray
+      if (!(folder).exists()) {
+        FileUtils.forceMkdir(folder)
+      }
+
+      val distPath: String = FilenameUtils.getFullPath(entity.path).replace(entity.fileName, "")
+      val dist: File = new File(folder.getPath, distPath)
+      if (!dist.exists()) {
+        FileUtils.forceMkdir(dist)
+      }
+      val filePath: File = new File(dist.getPath, entity.fileName)
+
+      //val fos: FileOutputStream = new FileOutputStream(new File(folder.getPath, entity.fileName))
+      val fos: FileOutputStream = new FileOutputStream(filePath)
       fos.write(data)
       fos.close()
 
