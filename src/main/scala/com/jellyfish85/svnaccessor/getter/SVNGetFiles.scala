@@ -72,7 +72,7 @@ class SVNGetFiles {
     println(entity.path)
     repository.getFile(
       entity.path,
-      entity.revision,
+      repository.getLatestRevision,
       SVNProperties.wrap(java.util.Collections.EMPTY_MAP),
       out
     )
