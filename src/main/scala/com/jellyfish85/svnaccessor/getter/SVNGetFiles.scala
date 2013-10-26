@@ -178,4 +178,28 @@ class SVNGetFiles {
     }
     list = List()
   }
+
+  /**
+   * == Over View ==
+   *
+   * download subversion repository files recursively by using a repository path
+   *
+   * @param repository
+   * @param folder
+   * @param path
+   * @param level
+   * @param obj
+   * @throws org.tmatesoft.svn.core.SVNException
+   */
+  @throws(classOf[SVNException])
+  def simpleGetFilesRecursive[A <: SVNFilter](repository: SVNRepository,
+                              folder: String, path: String, level: Int,
+                              obj: A) {
+    def filter(bean: SVNRequestBean): Boolean = obj.filter(bean)
+    simpleGetFilesRecursive(repository, folder, path, level, filter(_))
+  }
+}
+
+trait SVNFilter {
+  def filter(bean: SVNRequestBean): Boolean
 }
