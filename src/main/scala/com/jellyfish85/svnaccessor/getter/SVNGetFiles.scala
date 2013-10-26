@@ -59,6 +59,42 @@ class SVNGetFiles {
    *
    * download svn files by using list of bean
    *
+   * @param entity
+   * @param folder
+   * @throws org.tmatesoft.svn.core.SVNException
+   */
+  @throws(classOf[SVNException])
+  def simpleGetFile(entity: SVNRequestBean, folder: File) {
+    FileUtils.cleanDirectory(folder)
+
+    val manager   : SVNManager     = new SVNManager
+    val repository: SVNRepository  = manager.repository
+
+    val out: ByteArrayOutputStream = new ByteArrayOutputStream()
+    println(entity.path)
+    repository.getFile(
+      entity.path,
+      entity.revision,
+      SVNProperties.wrap(java.util.Collections.EMPTY_MAP),
+      out
+    )
+
+    val data: Array[scala.Byte] = out.toByteArray
+    if (!(folder).exists()) {
+      FileUtils.forceMkdir(folder)
+    }
+
+    val fos: FileOutputStream = new FileOutputStream(new File(folder.getPath, entity.fileName))
+    fos.write(data)
+    fos.close()
+  }
+
+
+  /**
+   * == Over View ==
+   *
+   * download svn files by using list of bean
+   *
    * @param list
    * @param folder
    * @throws org.tmatesoft.svn.core.SVNException
