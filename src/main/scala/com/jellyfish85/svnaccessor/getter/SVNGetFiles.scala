@@ -65,8 +65,6 @@ class SVNGetFiles {
    */
   @throws(classOf[SVNException])
   def simpleGetFile(entity: SVNRequestBean, folder: File) {
-    FileUtils.cleanDirectory(folder)
-
     val manager   : SVNManager     = new SVNManager
     val repository: SVNRepository  = manager.repository
 
