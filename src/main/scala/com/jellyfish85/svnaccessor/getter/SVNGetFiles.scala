@@ -151,7 +151,9 @@ class SVNGetFiles {
         val newPath  : String = (new File(path, entry.getName)).getPath.replace('\\', '/')
         val newLevel: Int = level + 1
 
-        simpleGetFilesRecursive(repository, newFolder, newPath, newLevel, simpleFilter)
+        if (simpleFilter(entity)) {
+          simpleGetFilesRecursive(repository, newFolder, newPath, newLevel, simpleFilter)
+        }
       }
     }
 
