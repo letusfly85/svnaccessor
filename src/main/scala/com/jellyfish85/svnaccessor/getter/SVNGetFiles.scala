@@ -319,12 +319,13 @@ class SVNGetFiles {
 
       val data = out.toByteArray
 
-      if (!(new File(folder).exists())) {
-        FileUtils.forceMkdir(new File(folder))
+      val targetFolder = folder.replace(removePath, "")
+      if (!(new File(targetFolder).exists())) {
+        FileUtils.forceMkdir(new File(targetFolder))
       }
 
       //val fos: FileOutputStream = new FileOutputStream(new File(folder, entity.path.replace(removePath, "")))
-      val fos: FileOutputStream = new FileOutputStream(new File(folder, entity.fileName))
+      val fos: FileOutputStream = new FileOutputStream(new File(targetFolder, entity.fileName))
       fos.write(data)
       fos.close()
     }
