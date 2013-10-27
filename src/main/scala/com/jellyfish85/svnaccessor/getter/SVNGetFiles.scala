@@ -229,7 +229,6 @@ class SVNGetFiles {
    *
    * download subversion repository files recursively by using a repository path
    *
-   * @param repository
    * @param folder
    * @param path
    * @param level
