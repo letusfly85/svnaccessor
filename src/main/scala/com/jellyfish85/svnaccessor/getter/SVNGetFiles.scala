@@ -151,10 +151,12 @@ class SVNGetFiles {
   @throws(classOf[SVNException])
   def simpleGetFilesRecursive(repository: SVNRepository,
                               folder: String, path: String, level: Int, 
-                              simpleFilter: (SVNRequestBean => Boolean)) {
+                              simpleFilter: (SVNRequestBean => Boolean),
+                               removePath: String) {
 
-    //simpleGetFilesRecursiveWithRemovePath(repository, folder, path, level, simpleFilter, "")
+    simpleGetFilesRecursiveWithRemovePath(repository, folder, path, level, simpleFilter, removePath)
 
+    /*
     // only first time, it is called to remove a work directory
     if (level == 0) {
       val work = new File(folder)
@@ -190,7 +192,7 @@ class SVNGetFiles {
         val newLevel: Int = level + 1
 
         //if (simpleFilter(entity)) {
-        simpleGetFilesRecursive(repository, newFolder, newPath, newLevel, simpleFilter)
+        simpleGetFilesRecursive(repository, newFolder, newPath, newLevel, simpleFilter, removePath)
         //}
       }
     }
@@ -217,6 +219,7 @@ class SVNGetFiles {
       fos.close()
     }
     list = List()
+    */
 
   }
 
@@ -235,9 +238,11 @@ class SVNGetFiles {
   @throws(classOf[SVNException])
   def simpleGetFilesRecursive[A <: SVNFilter](repository: SVNRepository,
                               folder: String, path: String, level: Int,
-                              obj: A) {
+                              obj: A, removePath: String) {
+
     def filter(bean: SVNRequestBean): Boolean = obj.filter(bean)
-    simpleGetFilesRecursive(repository, folder, path, level, filter(_))
+    simpleGetFilesRecursive(repository, folder, path, level, filter(_), removePath)
+
   }
 
   /**
@@ -293,7 +298,7 @@ class SVNGetFiles {
         val newPath  : String = (new File(path, entry.getName)).getPath.replace('\\', '/')
         val newLevel: Int = level + 1
 
-        simpleGetFilesRecursive(repository, newFolder, newPath, newLevel, simpleFilter)
+        simpleGetFilesRecursive(repository, newFolder, newPath, newLevel, simpleFilter, removePath)
       }
     }
 
