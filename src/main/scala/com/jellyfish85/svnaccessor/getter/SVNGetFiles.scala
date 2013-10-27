@@ -323,7 +323,8 @@ class SVNGetFiles {
         FileUtils.forceMkdir(new File(folder))
       }
 
-      val fos: FileOutputStream = new FileOutputStream(new File(folder, entity.path.replace(removePath, "")))
+      //val fos: FileOutputStream = new FileOutputStream(new File(folder, entity.path.replace(removePath, "")))
+      val fos: FileOutputStream = new FileOutputStream(new File(folder, entity.fileName))
       fos.write(data)
       fos.close()
     }
