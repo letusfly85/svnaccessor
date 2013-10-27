@@ -302,7 +302,8 @@ class SVNGetFiles {
         val newPath  : String = (new File(path, entry.getName)).getPath.replace('\\', '/')
         val newLevel: Int = level + 1
 
-        simpleGetFilesRecursive(repository, newFolder, newPath, newLevel, simpleFilter, removePath)
+        //simpleGetFilesRecursive(repository, newFolder, newPath, newLevel, simpleFilter, removePath)
+        simpleGetFilesRecursive(repository, folder, newPath, newLevel, simpleFilter, removePath)
       }
     }
 
@@ -319,15 +320,20 @@ class SVNGetFiles {
 
       val data = out.toByteArray
 
-
+      /*
       val targetFolder = folder.replace(removePath, "")
       println(folder + "\t" + removePath + "\t" + targetFolder)
       if (!(new File(targetFolder).exists())) {
         FileUtils.forceMkdir(new File(targetFolder))
+      } */
+      val target  = new File(entity.path.replace(removePath, ""))
+      val target2 = new File(folder, target.getPath)
+      if (!(target2.getParentFile.exists())) {
+        FileUtils.forceMkdir(target2.getParentFile)
       }
 
       //val fos: FileOutputStream = new FileOutputStream(new File(folder, entity.path.replace(removePath, "")))
-      val fos: FileOutputStream = new FileOutputStream(new File(targetFolder, entity.fileName))
+      val fos: FileOutputStream = new FileOutputStream(new File(target2.getParentFile, entity.fileName))
       fos.write(data)
       fos.close()
     }
