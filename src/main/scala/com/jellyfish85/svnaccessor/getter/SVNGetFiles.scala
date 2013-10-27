@@ -6,6 +6,7 @@ import java.io.{FileOutputStream, ByteArrayOutputStream, File}
 import org.tmatesoft.svn.core.io.SVNRepository
 import org.tmatesoft.svn.core.{SVNNodeKind, SVNDirEntry, SVNException, SVNProperties}
 import org.apache.commons.io.{FilenameUtils, FileUtils}
+import org.tmatesoft.svn.core.internal.wc.SVNWCManager
 
 /**
  * == Over View ==
@@ -236,9 +237,13 @@ class SVNGetFiles {
    * @throws org.tmatesoft.svn.core.SVNException
    */
   @throws(classOf[SVNException])
-  def simpleGetFilesRecursive[A <: SVNFilter](repository: SVNRepository,
+  def simpleGetFilesRecursive[A <: SVNFilter](
                               folder: String, path: String, level: Int,
-                              obj: A, removePath: String) {
+                              obj: A, removePath: String
+                                               ) {
+
+    val svn: SVNManager = new SVNManager
+    val repository = svn.repository
 
     def filter(bean: SVNRequestBean): Boolean = obj.filter(bean)
     simpleGetFilesRecursive(repository, folder, path, level, filter(_), removePath)
