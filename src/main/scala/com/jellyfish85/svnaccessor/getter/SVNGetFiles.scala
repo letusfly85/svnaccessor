@@ -319,7 +319,9 @@ class SVNGetFiles {
 
       val data = out.toByteArray
 
+
       val targetFolder = folder.replace(removePath, "")
+      println(folder + "\t" + removePath + "\t" + targetFolder)
       if (!(new File(targetFolder).exists())) {
         FileUtils.forceMkdir(new File(targetFolder))
       }
