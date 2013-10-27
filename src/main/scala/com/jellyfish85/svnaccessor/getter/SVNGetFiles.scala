@@ -298,7 +298,7 @@ class SVNGetFiles {
         list ::= entity
 
       } else if (entry.getKind == SVNNodeKind.DIR) {
-        val newFolder: String = (new File(folder, entry.getName)).getPath
+        //val newFolder: String = (new File(folder, entry.getName)).getPath
         val newPath  : String = (new File(path, entry.getName)).getPath.replace('\\', '/')
         val newLevel: Int = level + 1
 
