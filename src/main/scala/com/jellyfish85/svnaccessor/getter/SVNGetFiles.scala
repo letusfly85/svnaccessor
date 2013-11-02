@@ -6,7 +6,6 @@ import java.io.{FileOutputStream, ByteArrayOutputStream, File}
 import org.tmatesoft.svn.core.io.SVNRepository
 import org.tmatesoft.svn.core.{SVNNodeKind, SVNDirEntry, SVNException, SVNProperties}
 import org.apache.commons.io.{FilenameUtils, FileUtils}
-import scala.annotation.tailrec
 
 /**
  * == Over View ==
@@ -273,6 +272,25 @@ class SVNGetFiles {
       fos.close()
     }
     list = List()
+  }
+
+  /**
+   *
+   *
+   * @param path
+   * @param simpleFilter
+   * @return
+   */
+  def getSVNInfo(
+      path: String,
+      simpleFilter: (SVNRequestBean => Boolean)
+                  ): List[SVNRequestBean] = {
+    val manager: SVNManager = new SVNManager
+    val repository: SVNRepository = manager.repository
+
+    val list: List[SVNRequestBean] = getSVNInfo(repository, path, simpleFilter)
+
+    list
   }
 
   /**
