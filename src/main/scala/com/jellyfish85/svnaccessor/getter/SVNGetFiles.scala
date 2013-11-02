@@ -6,7 +6,7 @@ import java.io.{FileOutputStream, ByteArrayOutputStream, File}
 import org.tmatesoft.svn.core.io.SVNRepository
 import org.tmatesoft.svn.core.{SVNNodeKind, SVNDirEntry, SVNException, SVNProperties}
 import org.apache.commons.io.{FilenameUtils, FileUtils}
-import org.tmatesoft.svn.core.internal.wc.SVNWCManager
+import scala.annotation.tailrec
 
 /**
  * == Over View ==
@@ -157,71 +157,6 @@ class SVNGetFiles {
 
     simpleGetFilesRecursiveWithRemovePath(repository, folder, path, level, simpleFilter, removePath)
 
-    /*
-    // only first time, it is called to remove a work directory
-    if (level == 0) {
-      val work = new File(folder)
-      if (work.exists()) FileUtils.cleanDirectory(work)
-      FileUtils.forceMkdir(work)
-    }
-
-    val dirEntries:java.util.List[SVNDirEntry] = new java.util.ArrayList[SVNDirEntry]()
-    repository.getDir(
-      path,
-      repository.getLatestRevision,
-      SVNProperties.wrap(java.util.Collections.EMPTY_MAP),
-      dirEntries
-    )
-
-    //convert SVNEntry to SVNRequestBean
-    var list: List[SVNRequestBean] = List()
-    for (i <- 0 to dirEntries.size() -1) {
-      val entry: SVNDirEntry = dirEntries.get(i)
-
-      val entity: SVNRequestBean = new SVNRequestBean
-      entity.fileName = entry.getName
-      entity.path     = new File(path,  entry.getRelativePath).getPath
-      entity.path     = entity.path.replace('\\', '/')
-      entity.revision = entry.getRevision.asInstanceOf[Int]
-
-      if (entry.getKind == SVNNodeKind.FILE) {
-        list ::= entity
-
-      } else if (entry.getKind == SVNNodeKind.DIR) {
-        val newFolder: String = (new File(folder, entry.getName)).getPath
-        val newPath  : String = (new File(path, entry.getName)).getPath.replace('\\', '/')
-        val newLevel: Int = level + 1
-
-        //if (simpleFilter(entity)) {
-        simpleGetFilesRecursive(repository, newFolder, newPath, newLevel, simpleFilter, removePath)
-        //}
-      }
-    }
-
-    list.filter(entity => simpleFilter(entity)).foreach {entity: SVNRequestBean =>
-      val out: ByteArrayOutputStream = new ByteArrayOutputStream()
-      println("downloading ... " + entity.path)
-
-      repository.getFile(
-        entity.path,
-        repository.getLatestRevision,
-        SVNProperties.wrap(java.util.Collections.EMPTY_MAP),
-        out
-      )
-
-      val data = out.toByteArray
-
-      if (!(new File(folder).exists())) {
-        FileUtils.forceMkdir(new File(folder))
-      }
-
-      val fos: FileOutputStream = new FileOutputStream(new File(folder, entity.fileName))
-      fos.write(data)
-      fos.close()
-    }
-    list = List()
-    */
-
   }
 
   /**
@@ -340,6 +275,53 @@ class SVNGetFiles {
     list = List()
   }
 
+  /**
+   * == getSVNInfo ==
+   *
+   * @param repository
+   * @param path
+   * @param simpleFilter
+   * @return
+   */
+  private def getSVNInfo(
+                         repository: SVNRepository,
+                         path      : String,
+                         simpleFilter: (SVNRequestBean => Boolean)
+                         ): List[SVNRequestBean] = {
+
+    var resultSets: List[SVNRequestBean] = List()
+
+    val dirEntries:java.util.List[SVNDirEntry] = new java.util.ArrayList[SVNDirEntry]()
+    repository.getDir(
+      path,
+      repository.getLatestRevision,
+      SVNProperties.wrap(java.util.Collections.EMPTY_MAP),
+      dirEntries
+    )
+
+    //convert SVNEntry to SVNRequestBean
+    var list: List[SVNRequestBean] = List()
+    for (i <- 0 to dirEntries.size() -1) {
+      val entry: SVNDirEntry = dirEntries.get(i)
+
+      val bean: SVNRequestBean = new SVNRequestBean
+      bean.fileName = entry.getName
+      bean.path     = new File(path,  entry.getRelativePath).getPath
+      bean.path     = bean.path.replace('\\', '/')
+      bean.revision = entry.getRevision.asInstanceOf[Int]
+
+      if (entry.getKind == SVNNodeKind.FILE) {
+        list ::= bean
+
+      } else if (entry.getKind == SVNNodeKind.DIR) {
+        val newPath  : String = (new File(path, entry.getName)).getPath.replace('\\', '/')
+
+        resultSets :::= getSVNInfo(repository, newPath, simpleFilter)
+      }
+    }
+
+    resultSets
+  }
 }
 
 trait SVNFilter {
