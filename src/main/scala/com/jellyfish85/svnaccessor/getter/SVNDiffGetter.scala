@@ -1,11 +1,15 @@
 package com.jellyfish85.svnaccessor.getter
 
 import com.jellyfish85.svnaccessor.bean.SVNDiffBean
-import org.tmatesoft.svn.core.wc.{SVNDiffStatus, ISVNDiffStatusHandler, SVNRevision, SVNDiffClient}
+import org.tmatesoft.svn.core.wc._
 import com.jellyfish85.svnaccessor.manager.SVNManager
 import org.tmatesoft.svn.core.{SVNNodeKind, SVNDepth, SVNURL}
 import org.apache.commons.io.FilenameUtils
 
+/**
+ *
+ *
+ */
 class SVNDiffGetter {
 
   /**
@@ -14,7 +18,7 @@ class SVNDiffGetter {
    * @param oldRevision
    * @return
    */
-  def getter(path: String, oldRevision: Long): List[SVNDiffBean] = {
+  def get(path: String, oldRevision: Long): List[SVNDiffBean] = {
 
     val manager: SVNManager = new SVNManager
 
@@ -23,13 +27,6 @@ class SVNDiffGetter {
       new ISVNDiffStatusHandler (){
 
         def  handleDiffStatus (diffStatus: SVNDiffStatus) {
-          /*
-          System.out.println ("\n\nDiff Status > " + diffStatus);
-          System.out.println ("Path > " + diffStatus.getPath ());
-          System.out.println ("File > " + diffStatus.getFile ());
-          System.out.println ("Kind > " + diffStatus.getKind ());
-          System.out.println ("Modification Type > " + diffStatus.getModificationType ());
-          */
 
           if (diffStatus.getKind == SVNNodeKind.FILE) {
             val bean: SVNDiffBean = new SVNDiffBean
@@ -56,6 +53,33 @@ class SVNDiffGetter {
       status
     )
 
-    diffList
+    shrink(diffList)
+  }
+
+  /**
+   *
+   *
+   * @param diffList
+   * @return
+   */
+  def shrink(diffList: List[SVNDiffBean]): List[SVNDiffBean] = {
+    var list: List[SVNDiffBean] = List()
+
+    diffList.foreach {bean =>
+       if (bean.modificationType == SVNStatusType.STATUS_DELETED) {
+          if (list.contains(bean)) {
+            list = list.filter(x => x.path != bean.path)
+
+            list ::= bean
+          }
+
+       } else {
+         if (!list.contains(bean)) {
+           list ::= bean
+         }
+       }
+    }
+
+    list
   }
 }
