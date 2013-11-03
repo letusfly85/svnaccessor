@@ -10,6 +10,12 @@ class SVNRequestBean {
 
   var fileName: String = _
 
+  var author: String = _
+
+  var commitymd: String = _
+
+  var commithms: String = _
+
   var fileData: Array[Byte] = _
   var oldData:  Array[Byte] = _
 

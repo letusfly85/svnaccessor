@@ -6,6 +6,7 @@ import java.io.{FileOutputStream, ByteArrayOutputStream, File}
 import org.tmatesoft.svn.core.io.SVNRepository
 import org.tmatesoft.svn.core.{SVNNodeKind, SVNDirEntry, SVNException, SVNProperties}
 import org.apache.commons.io.{FilenameUtils, FileUtils}
+import java.text.SimpleDateFormat
 
 /**
  * == Over View ==
@@ -309,6 +310,9 @@ class SVNGetFiles {
 
     var resultSets: List[SVNRequestBean] = List()
 
+    val simpleDateFormatYMD: SimpleDateFormat = new SimpleDateFormat("yyyyMMdd")
+    val simpleDateFormatHMS: SimpleDateFormat = new SimpleDateFormat("HHmmss")
+
     val headRevision = repository.getLatestRevision
     val dirEntries:java.util.List[SVNDirEntry] = new java.util.ArrayList[SVNDirEntry]()
     repository.getDir(
@@ -329,6 +333,10 @@ class SVNGetFiles {
       bean.path     = bean.path.replace('\\', '/')
       bean.revision = entry.getRevision.asInstanceOf[Int]
       bean.headRevision = headRevision
+
+      bean.author    = entry.getAuthor
+      bean.commitymd = simpleDateFormatYMD.format(entry.getDate)
+      bean.commithms = simpleDateFormatHMS.format(entry.getDate)
 
       if (entry.getKind == SVNNodeKind.FILE) {
         resultSets ::= bean
