@@ -7,7 +7,7 @@ object Main {
   def main(args: Array[String]) {
     val getter: SVNDiffGetter = new SVNDiffGetter
 
-    getter.getter("******", 1111111)
+    getter.getter("********", 11111)
   }
 
 }

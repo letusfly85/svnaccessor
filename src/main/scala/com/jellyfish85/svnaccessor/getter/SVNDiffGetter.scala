@@ -37,6 +37,7 @@ class SVNDiffGetter {
         throws SVNException
      *
      */
+    var diffList: List[SVNDiffStatus] = List()
     val status =
       new ISVNDiffStatusHandler (){
         var _diffStatus: SVNDiffStatus = null
@@ -48,6 +49,7 @@ class SVNDiffGetter {
           System.out.println ("File > " + diffStatus.getFile ());
           System.out.println ("Kind > " + diffStatus.getKind ());
           System.out.println ("Modification Type > " + diffStatus.getModificationType ());
+          diffList ::= diffStatus
         }
       }
 
@@ -61,7 +63,11 @@ class SVNDiffGetter {
       true,
       status
     )
-    println(status._diffStatus.getModificationType)
+   // println(status._diffStatus.getModificationType)
+
+    if (!diffList.isEmpty) {
+      diffList.foreach {diffStatus: SVNDiffStatus => println(diffStatus.getPath)}
+    }
   }
 
 }
