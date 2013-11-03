@@ -323,7 +323,6 @@ class SVNGetFiles {
     )
 
     //convert SVNEntry to SVNRequestBean
-    var list: List[SVNRequestBean] = List()
     for (i <- 0 to dirEntries.size() -1) {
       val entry: SVNDirEntry = dirEntries.get(i)
 
