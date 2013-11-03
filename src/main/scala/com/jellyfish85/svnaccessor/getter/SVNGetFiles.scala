@@ -233,11 +233,9 @@ class SVNGetFiles {
         list ::= entity
 
       } else if (entry.getKind == SVNNodeKind.DIR) {
-        //val newFolder: String = (new File(folder, entry.getName)).getPath
         val newPath  : String = (new File(path, entry.getName)).getPath.replace('\\', '/')
         val newLevel: Int = level + 1
 
-        //simpleGetFilesRecursive(repository, newFolder, newPath, newLevel, simpleFilter, removePath)
         simpleGetFilesRecursive(repository, folder, newPath, newLevel, simpleFilter, removePath)
       }
     }
@@ -267,7 +265,6 @@ class SVNGetFiles {
         FileUtils.forceMkdir(target2.getParentFile)
       }
 
-      //val fos: FileOutputStream = new FileOutputStream(new File(folder, entity.path.replace(removePath, "")))
       val fos: FileOutputStream = new FileOutputStream(new File(target2.getParentFile, entity.fileName))
       fos.write(data)
       fos.close()
