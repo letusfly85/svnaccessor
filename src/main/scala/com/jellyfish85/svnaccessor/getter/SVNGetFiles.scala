@@ -331,7 +331,7 @@ class SVNGetFiles {
       bean.headRevision = headRevision
 
       if (entry.getKind == SVNNodeKind.FILE) {
-        list ::= bean
+        resultSets ::= bean
 
       } else if (entry.getKind == SVNNodeKind.DIR) {
         val newPath  : String = (new File(path, entry.getName)).getPath.replace('\\', '/')
@@ -340,7 +340,7 @@ class SVNGetFiles {
       }
     }
 
-    resultSets
+    resultSets.filter(x => simpleFilter(x))
   }
 }
 
