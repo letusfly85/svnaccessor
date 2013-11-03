@@ -1,11 +1,10 @@
 package com.jellyfish85.svnaccessor.getter
 
-import com.jellyfish85.svnaccessor.bean.SVNRequestBean
+import com.jellyfish85.svnaccessor.bean.SVNDiffBean
 import org.tmatesoft.svn.core.wc.{SVNDiffStatus, ISVNDiffStatusHandler, SVNRevision, SVNDiffClient}
 import com.jellyfish85.svnaccessor.manager.SVNManager
-import org.tmatesoft.svn.core.{SVNDepth, SVNURL}
-import org.tmatesoft.svn.core.io.SVNRepository
-import java.io.ByteArrayOutputStream
+import org.tmatesoft.svn.core.{SVNNodeKind, SVNDepth, SVNURL}
+import org.apache.commons.io.FilenameUtils
 
 class SVNDiffGetter {
 
@@ -15,41 +14,34 @@ class SVNDiffGetter {
    * @param oldRevision
    * @return
    */
-  def getter(path: String, oldRevision: Long) {
-    var list: List[SVNRequestBean] = List()
+  def getter(path: String, oldRevision: Long): List[SVNDiffBean] = {
 
     val manager: SVNManager = new SVNManager
-    val repository: SVNRepository = manager.repository
 
-    val out: ByteArrayOutputStream = new ByteArrayOutputStream()
-
-    /**
-     * @example
-     *
-       public void doDiffStatus(
-           SVNURL url1,
-           SVNRevision rN,
-           SVNURL url2,
-           SVNRevision rM,
-           SVNDepth depth,
-           boolean useAncestry,
-           ISVNDiffStatusHandler handler)
-        throws SVNException
-     *
-     */
-    var diffList: List[SVNDiffStatus] = List()
+    var diffList: List[SVNDiffBean] = List()
     val status =
       new ISVNDiffStatusHandler (){
-        var _diffStatus: SVNDiffStatus = null
 
         def  handleDiffStatus (diffStatus: SVNDiffStatus) {
-          this._diffStatus = diffStatus
+          /*
           System.out.println ("\n\nDiff Status > " + diffStatus);
           System.out.println ("Path > " + diffStatus.getPath ());
           System.out.println ("File > " + diffStatus.getFile ());
           System.out.println ("Kind > " + diffStatus.getKind ());
           System.out.println ("Modification Type > " + diffStatus.getModificationType ());
-          diffList ::= diffStatus
+          */
+
+          if (diffStatus.getKind == SVNNodeKind.FILE) {
+            val bean: SVNDiffBean = new SVNDiffBean
+
+            bean.directoryType    = diffStatus.getKind()
+            bean.modificationType = diffStatus.getModificationType()
+
+            bean.path             = path + "/" + diffStatus.getPath
+            bean.fileName         = FilenameUtils.getBaseName(bean.path)
+
+            diffList ::= bean
+          }
         }
       }
 
@@ -63,11 +55,7 @@ class SVNDiffGetter {
       true,
       status
     )
-   // println(status._diffStatus.getModificationType)
 
-    if (!diffList.isEmpty) {
-      diffList.foreach {diffStatus: SVNDiffStatus => println(diffStatus.getPath)}
-    }
+    diffList
   }
-
 }
