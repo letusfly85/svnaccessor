@@ -309,10 +309,11 @@ class SVNGetFiles {
 
     var resultSets: List[SVNRequestBean] = List()
 
+    val headRevision = repository.getLatestRevision
     val dirEntries:java.util.List[SVNDirEntry] = new java.util.ArrayList[SVNDirEntry]()
     repository.getDir(
       path,
-      repository.getLatestRevision,
+      headRevision,
       SVNProperties.wrap(java.util.Collections.EMPTY_MAP),
       dirEntries
     )
@@ -327,6 +328,7 @@ class SVNGetFiles {
       bean.path     = new File(path,  entry.getRelativePath).getPath
       bean.path     = bean.path.replace('\\', '/')
       bean.revision = entry.getRevision.asInstanceOf[Int]
+      bean.headRevision = headRevision
 
       if (entry.getKind == SVNNodeKind.FILE) {
         list ::= bean

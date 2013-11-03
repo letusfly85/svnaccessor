@@ -3,6 +3,9 @@ package com.jellyfish85.svnaccessor.bean
 class SVNRequestBean {
 
   var path:     String = _
+
+  var headRevision: Long = _
+
   var revision: Long   = _
 
   var fileName: String = _
@@ -15,6 +18,8 @@ class SVNRequestBean {
   def setPath(_path: String) =  path = _path
 
   def setRevision(_revision: Long) = revision = _revision
+
+  def setHeadRevision(_headRevision: Long) = headRevision = _headRevision
 
   def setFileName(_fileName: String) = fileName = _fileName
 
