@@ -335,8 +335,8 @@ class SVNGetFiles {
       bean.headRevision = headRevision
 
       bean.author    = entry.getAuthor
-      bean.commitymd = simpleDateFormatYMD.format(entry.getDate)
-      bean.commithms = simpleDateFormatHMS.format(entry.getDate)
+      bean.commitYmd = simpleDateFormatYMD.format(entry.getDate)
+      bean.commitHms = simpleDateFormatHMS.format(entry.getDate)
 
       if (entry.getKind == SVNNodeKind.FILE) {
         resultSets ::= bean

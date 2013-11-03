@@ -12,9 +12,9 @@ class SVNRequestBean {
 
   var author: String = _
 
-  var commitymd: String = _
+  var commitYmd: String = _
 
-  var commithms: String = _
+  var commitHms: String = _
 
   var fileData: Array[Byte] = _
   var oldData:  Array[Byte] = _
