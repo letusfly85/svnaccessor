@@ -9,6 +9,7 @@ import org.apache.commons.io.{FilenameUtils, FileUtils}
 
 import java.text.SimpleDateFormat
 import java.io.{FileOutputStream, ByteArrayOutputStream, File}
+import java.util
 
 /**
  * == Over View ==
@@ -353,6 +354,7 @@ class SVNGetFiles {
    * @param list List of SVNDiffBean
    * @return List of SVNDiffBean
    */
+  @throws(classOf[SVNException])
   def modifyAttribute2Current(list: List[SVNDiffBean]): List[SVNDiffBean] = {
     var resultSets: List[SVNDiffBean] = List()
 
@@ -365,23 +367,13 @@ class SVNGetFiles {
     list.foreach {bean: SVNDiffBean =>
       val result: SVNDiffBean = bean
 
-      val dirEntries:java.util.List[SVNDirEntry] = new java.util.ArrayList[SVNDirEntry]()
-      repository.getDir(
-        bean.path,
-        repository.getLatestRevision,
-        SVNProperties.wrap(java.util.Collections.EMPTY_MAP),
-        dirEntries
-      )
+      val modifiedEntry: SVNDirEntry = repository.info(bean.path, repository.getLatestRevision)
+      result.author    = modifiedEntry.getAuthor
+      result.revision  = modifiedEntry.getRevision
+      result.commitYmd = simpleDateFormatYMD.format(modifiedEntry.getDate)
+      result.commitHms = simpleDateFormatHMS.format(modifiedEntry.getDate)
 
-      if (!dirEntries.isEmpty) {
-        val modifiedEntry: SVNDirEntry = dirEntries.get(0)
-        result.author    = modifiedEntry.getAuthor
-        result.revision  = modifiedEntry.getRevision
-        result.commitYmd = simpleDateFormatYMD.format(modifiedEntry.getDate)
-        result.commitHms = simpleDateFormatHMS.format(modifiedEntry.getDate)
-
-        resultSets ::= result
-      }
+      resultSets ::= result
     }
 
     resultSets

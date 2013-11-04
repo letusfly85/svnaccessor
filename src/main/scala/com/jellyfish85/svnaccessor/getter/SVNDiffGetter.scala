@@ -24,6 +24,8 @@ class SVNDiffGetter {
 
     val manager: SVNManager = new SVNManager
 
+    val baseUrl: String = manager.repository.getLocation.toString
+
     var diffList: List[SVNDiffBean] = List()
     val status =
       new ISVNDiffStatusHandler (){
@@ -36,7 +38,7 @@ class SVNDiffGetter {
             bean.directoryType    = diffStatus.getKind()
             bean.modificationType = diffStatus.getModificationType()
 
-            bean.path             = path + "/" + diffStatus.getPath
+            bean.path             = path.replace(baseUrl, "") + "/" + diffStatus.getPath
             bean.fileName         = FilenameUtils.getBaseName(bean.path)
 
             diffList ::= bean
