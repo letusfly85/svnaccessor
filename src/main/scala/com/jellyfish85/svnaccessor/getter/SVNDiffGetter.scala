@@ -39,7 +39,7 @@ class SVNDiffGetter {
             bean.modificationType = diffStatus.getModificationType()
 
             bean.path             = path.replace(baseUrl, "") + "/" + diffStatus.getPath
-            bean.fileName         = FilenameUtils.getBaseName(bean.path)
+            bean.fileName         = FilenameUtils.getName(bean.path)
 
             diffList ::= bean
           }

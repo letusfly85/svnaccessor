@@ -363,13 +363,16 @@ class SVNGetFiles {
 
     val manager: SVNManager = new SVNManager
     val repository: SVNRepository = manager.repository
+    val headRevision: Long = repository.getLatestRevision
 
     list.foreach {bean: SVNDiffBean =>
       val result: SVNDiffBean = bean
 
-      val modifiedEntry: SVNDirEntry = repository.info(bean.path, repository.getLatestRevision)
+      val modifiedEntry: SVNDirEntry = repository.info(bean.path, headRevision)
       result.author    = modifiedEntry.getAuthor
+      result.headRevision = headRevision
       result.revision  = modifiedEntry.getRevision
+      result.fileName  = bean.fileName
       result.commitYmd = simpleDateFormatYMD.format(modifiedEntry.getDate)
       result.commitHms = simpleDateFormatHMS.format(modifiedEntry.getDate)
 
