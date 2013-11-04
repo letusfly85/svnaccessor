@@ -1,9 +1,11 @@
 package com.jellyfish85.svnaccessor.getter
 
 import com.jellyfish85.svnaccessor.bean.SVNDiffBean
-import org.tmatesoft.svn.core.wc._
 import com.jellyfish85.svnaccessor.manager.SVNManager
+
+import org.tmatesoft.svn.core.wc._
 import org.tmatesoft.svn.core.{SVNNodeKind, SVNDepth, SVNURL}
+
 import org.apache.commons.io.FilenameUtils
 
 /**

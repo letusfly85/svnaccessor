@@ -1,12 +1,14 @@
 package com.jellyfish85.svnaccessor.getter
 
 import com.jellyfish85.svnaccessor.manager.SVNManager
-import com.jellyfish85.svnaccessor.bean.SVNRequestBean
-import java.io.{FileOutputStream, ByteArrayOutputStream, File}
+import com.jellyfish85.svnaccessor.bean.{SVNDiffBean, SVNRequestBean}
+
 import org.tmatesoft.svn.core.io.SVNRepository
 import org.tmatesoft.svn.core.{SVNNodeKind, SVNDirEntry, SVNException, SVNProperties}
 import org.apache.commons.io.{FilenameUtils, FileUtils}
+
 import java.text.SimpleDateFormat
+import java.io.{FileOutputStream, ByteArrayOutputStream, File}
 
 /**
  * == Over View ==
@@ -253,12 +255,6 @@ class SVNGetFiles {
 
       val data = out.toByteArray
 
-      /*
-      val targetFolder = folder.replace(removePath, "")
-      println(folder + "\t" + removePath + "\t" + targetFolder)
-      if (!(new File(targetFolder).exists())) {
-        FileUtils.forceMkdir(new File(targetFolder))
-      } */
       val target  = new File(entity.path.replace(removePath, ""))
       val target2 = new File(folder, target.getPath)
       if (!(target2.getParentFile.exists())) {
@@ -346,8 +342,58 @@ class SVNGetFiles {
 
     resultSets.filter(x => simpleFilter(x))
   }
+
+  /**
+   * == modifyAttribute2Current ==
+   *
+   * add current revision's attributes to SVNDiffBean
+   * by using  SVNRepository.getDir function
+   *
+   * @author wada shunsuke
+   * @param list List of SVNDiffBean
+   * @return List of SVNDiffBean
+   */
+  def modifyAttribute2Current(list: List[SVNDiffBean]): List[SVNDiffBean] = {
+    var resultSets: List[SVNDiffBean] = List()
+
+    val simpleDateFormatYMD: SimpleDateFormat = new SimpleDateFormat("yyyyMMdd")
+    val simpleDateFormatHMS: SimpleDateFormat = new SimpleDateFormat("HHmmss")
+
+    val manager: SVNManager = new SVNManager
+    val repository: SVNRepository = manager.repository
+
+    list.foreach {bean: SVNDiffBean =>
+      val result: SVNDiffBean = bean
+
+      val dirEntries:java.util.List[SVNDirEntry] = new java.util.ArrayList[SVNDirEntry]()
+      repository.getDir(
+        bean.path,
+        repository.getLatestRevision,
+        SVNProperties.wrap(java.util.Collections.EMPTY_MAP),
+        dirEntries
+      )
+
+      if (!dirEntries.isEmpty) {
+        val modifiedEntry: SVNDirEntry = dirEntries.get(0)
+        result.author    = modifiedEntry.getAuthor
+        result.revision  = modifiedEntry.getRevision
+        result.commitYmd = simpleDateFormatYMD.format(modifiedEntry.getDate)
+        result.commitHms = simpleDateFormatHMS.format(modifiedEntry.getDate)
+
+        resultSets ::= result
+      }
+    }
+
+    resultSets
+  }
 }
 
+/**
+ * == SVNFilter ==
+ *
+ * this trait will be used by java code to generate instance which has filtering function.
+ *
+ */
 trait SVNFilter {
   def filter(bean: SVNRequestBean): Boolean
 }
