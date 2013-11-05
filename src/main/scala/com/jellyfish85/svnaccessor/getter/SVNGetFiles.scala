@@ -410,6 +410,8 @@ class SVNGetFiles {
     val headRevision: Long = repository.getLatestRevision
 
     list.foreach {bean: SVNDiffBean =>
+
+      try {
       val result: SVNDiffBean = bean
 
       val modifiedEntry: SVNDirEntry = repository.info(bean.path, headRevision)
@@ -421,6 +423,12 @@ class SVNGetFiles {
       result.commitHms = simpleDateFormatHMS.format(modifiedEntry.getDate)
 
       resultSets ::= result
+
+      } catch {
+        case e: NullPointerException =>
+          println("[ERROR]" + bean.path)
+          e.printStackTrace()
+      }
     }
 
     resultSets
