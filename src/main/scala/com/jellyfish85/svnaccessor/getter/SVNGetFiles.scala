@@ -448,18 +448,42 @@ class SVNGetFiles {
    * @return List of SVNDiffBean
    */
   @throws(classOf[SVNException])
-  def modifyAttribute2Current(list: util.ArrayList[SVNDiffBean]): util.ArrayList[SVNDiffBean] = {
-    var targetList: List[SVNDiffBean] = List()
+  def modifyAttribute2Current(list: util.ArrayList[SVNRequestBean]): util.ArrayList[SVNRequestBean] = {
+    var targetList: List[SVNRequestBean] = List()
+
+    val manager: SVNManager = new SVNManager
+    val repository: SVNRepository = manager.repository
+    val headRevision: Long = repository.getLatestRevision
+
+    val simpleDateFormatYMD: SimpleDateFormat = new SimpleDateFormat("yyyyMMdd")
+    val simpleDateFormatHMS: SimpleDateFormat = new SimpleDateFormat("HHmmss")
 
     for (i <- 0 to list.size() -1) {
-      targetList ::= list.get(i)
+
+      val result: SVNRequestBean = list.get(i)
+      try {
+
+        val modifiedEntry: SVNDirEntry = repository.info(result.path, headRevision)
+        result.author       = modifiedEntry.getAuthor
+        result.headRevision = headRevision
+        result.revision     = modifiedEntry.getRevision
+        result.fileName     = result.fileName
+        result.commitYmd    = simpleDateFormatYMD.format(modifiedEntry.getDate)
+        result.commitHms    = simpleDateFormatHMS.format(modifiedEntry.getDate)
+
+        targetList ::= result
+
+      } catch {
+        case e: NullPointerException =>
+          println("[ERROR]" + result.path)
+          e.printStackTrace()
+      }
     }
 
-    val resultSets: List[SVNDiffBean] = modifyAttribute2Current(targetList)
-    val resultList: util.ArrayList[SVNDiffBean] = new util.ArrayList[SVNDiffBean]()
+    val resultList: util.ArrayList[SVNRequestBean] = new util.ArrayList[SVNRequestBean]()
 
-    for (i <- o to resultSets.size()) {
-      resultList.add(resultSets(i))
+    for (i <- 0 to targetList.length - 1) {
+      resultList.add(targetList(i))
     }
 
     resultList
