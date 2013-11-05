@@ -132,9 +132,12 @@ class SVNGetFiles {
     val manager   : SVNManager     = new SVNManager
     val repository: SVNRepository  = manager.repository
 
+    val headRevision: Long = repository.getLatestRevision
+
     list.foreach {entity: SVNRequestBean =>
       val out: ByteArrayOutputStream = new ByteArrayOutputStream()
       println(entity.path)
+      if (entity.revision == 0.toLong) entity.revision = headRevision
       repository.getFile(
         entity.path,
         entity.revision,
