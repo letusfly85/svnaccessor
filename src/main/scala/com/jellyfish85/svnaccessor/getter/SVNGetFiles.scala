@@ -436,7 +436,37 @@ class SVNGetFiles {
 
     resultSets
   }
+
+  /**
+   * == modifyAttribute2Current ==
+   *
+   * add current revision's attributes to SVNDiffBean
+   * by using  SVNRepository.getDir function
+   *
+   * @author wada shunsuke
+   * @param list List of SVNDiffBean
+   * @return List of SVNDiffBean
+   */
+  @throws(classOf[SVNException])
+  def modifyAttribute2Current(list: util.ArrayList[SVNDiffBean]): util.ArrayList[SVNDiffBean] = {
+    var targetList: List[SVNDiffBean] = List()
+
+    for (i <- 0 to list.size() -1) {
+      targetList ::= list.get(i)
+    }
+
+    val resultSets: List[SVNDiffBean] = modifyAttribute2Current(targetList)
+    val resultList: util.ArrayList[SVNDiffBean] = new util.ArrayList[SVNDiffBean]()
+
+    for (i <- o to resultSets.size()) {
+      resultList.add(resultSets(i))
+    }
+
+    resultList
+  }
 }
+
+
 
 /**
  * == SVNFilter ==
