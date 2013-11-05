@@ -62,6 +62,28 @@ class SVNGetFiles {
    *
    * download svn files by using list of bean
    *
+   * @param list
+   * @param folder
+   * @throws org.tmatesoft.svn.core.SVNException
+   */
+  @throws(classOf[SVNException])
+  def simpleGetFiles(list: util.ArrayList[SVNRequestBean], folder: File) {
+    var targetList: List[SVNRequestBean] = List()
+
+    for (i <- 0 to list.size()-1) {
+      val bean: SVNRequestBean = list.get(i)
+
+      targetList ::= bean
+    }
+
+    simpleGetFiles(targetList, folder)
+  }
+
+  /**
+   * == Over View ==
+   *
+   * download svn files by using list of bean
+   *
    * @param entity
    * @param folder
    * @throws org.tmatesoft.svn.core.SVNException
@@ -138,6 +160,28 @@ class SVNGetFiles {
       fos.close()
 
     }
+  }
+
+  /**
+   * == Over View ==
+   *
+   * download svn files by using list of bean
+   *
+   * @param list
+   * @param folder
+   * @throws org.tmatesoft.svn.core.SVNException
+   */
+  @throws(classOf[SVNException])
+  def simpleGetFilesWithDirectory(list: util.ArrayList[SVNRequestBean], folder: File) {
+    var targetList: List[SVNRequestBean] = List()
+
+    for (i <- 0 to list.size()-1) {
+      val bean: SVNRequestBean = list.get(i)
+
+      targetList ::= bean
+    }
+
+    simpleGetFilesWithDirectory(targetList, folder)
   }
 
   /**
