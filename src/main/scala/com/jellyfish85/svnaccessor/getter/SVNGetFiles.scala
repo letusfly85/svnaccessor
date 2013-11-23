@@ -126,8 +126,10 @@ class SVNGetFiles {
    * @throws org.tmatesoft.svn.core.SVNException
    */
   @throws(classOf[SVNException])
-  def simpleGetFilesWithDirectory(list: List[SVNRequestBean], folder: File) {
-    FileUtils.cleanDirectory(folder)
+  def simpleGetFilesWithDirectory(list: List[SVNRequestBean], folder: File, cleanFlag: Boolean = true) {
+    if (cleanFlag) {
+      FileUtils.cleanDirectory(folder)
+    }
 
     val manager   : SVNManager     = new SVNManager
     val repository: SVNRepository  = manager.repository
@@ -175,7 +177,7 @@ class SVNGetFiles {
    * @throws org.tmatesoft.svn.core.SVNException
    */
   @throws(classOf[SVNException])
-  def simpleGetFilesWithDirectory(list: util.ArrayList[SVNRequestBean], folder: File) {
+  def simpleGetFilesWithDirectory(list: util.ArrayList[SVNRequestBean], folder: File, cleanFlag: Boolean) {
     var targetList: List[SVNRequestBean] = List()
 
     for (i <- 0 to list.size()-1) {
@@ -184,7 +186,7 @@ class SVNGetFiles {
       targetList ::= bean
     }
 
-    simpleGetFilesWithDirectory(targetList, folder)
+    simpleGetFilesWithDirectory(targetList, folder, cleanFlag)
   }
 
   /**
