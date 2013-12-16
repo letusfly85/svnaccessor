@@ -423,7 +423,7 @@ class SVNGetFiles[A <: SVNRequestBean] {
       result.author    = modifiedEntry.getAuthor
       result.headRevision = headRevision
       result.revision  = modifiedEntry.getRevision
-      result.fileName  = bean.fileName
+      result.fileName  = modifiedEntry.getName //bean.fileName
       result.commitYmd = simpleDateFormatYMD.format(modifiedEntry.getDate)
       result.commitHms = simpleDateFormatHMS.format(modifiedEntry.getDate)
 
