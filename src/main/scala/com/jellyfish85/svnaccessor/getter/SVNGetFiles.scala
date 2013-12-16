@@ -17,7 +17,7 @@ import java.util
  * to get subversion files or a directory
  *
  */
-class SVNGetFiles {
+class SVNGetFiles[A <: SVNRequestBean] {
 
   /**
    * == Over View ==
@@ -396,16 +396,16 @@ class SVNGetFiles {
   /**
    * == modifyAttribute2Current ==
    *
-   * add current revision's attributes to SVNDiffBean
+   * add current revision's attributes to SVNRequestBean
    * by using  SVNRepository.getDir function
    *
    * @author wada shunsuke
-   * @param list List of SVNDiffBean
+   * @param list List of A as Generics of SVNRequestBean
    * @return List of SVNDiffBean
    */
   @throws(classOf[SVNException])
-  def modifyAttribute2Current(list: List[SVNDiffBean]): List[SVNDiffBean] = {
-    var resultSets: List[SVNDiffBean] = List()
+  def modifyAttribute2Current(list: List[A]): List[A] = {
+    var resultSets: List[A] = List()
 
     val simpleDateFormatYMD: SimpleDateFormat = new SimpleDateFormat("yyyyMMdd")
     val simpleDateFormatHMS: SimpleDateFormat = new SimpleDateFormat("HHmmss")
@@ -414,10 +414,10 @@ class SVNGetFiles {
     val repository: SVNRepository = manager.repository
     val headRevision: Long = repository.getLatestRevision
 
-    list.foreach {bean: SVNDiffBean =>
+    list.foreach {bean: A =>
 
       try {
-      val result: SVNDiffBean = bean
+      val result: A = bean
 
       val modifiedEntry: SVNDirEntry = repository.info(bean.path, headRevision)
       result.author    = modifiedEntry.getAuthor
