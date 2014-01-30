@@ -10,8 +10,12 @@ import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl
 
 class SVNManager {
 
+  var baseUrl:  String = _
+  var username: String = _
+  var password: String = _
+
   /**
-   * == Over View ==
+   * == default repository will be trunk ==
    *
    * return subversion repository object
    *
@@ -19,10 +23,8 @@ class SVNManager {
    * @return subversion repository object
    */
   @throws(classOf[SVNException])
-  def repository: SVNRepository = {
-    var username: String = ""
-    var password: String = ""
-    var baseUrl:  String = ""
+  def getRepository(_baseUrl: String): SVNRepository = {
+    this.baseUrl = _baseUrl
 
     val property: Properties = new Properties()
     try {
@@ -33,9 +35,8 @@ class SVNManager {
         property.load(getClass().getResourceAsStream("/properties/subversion.properties"))
       }
 
-      username = property.getProperty("username")
-      password = property.getProperty("password")
-      baseUrl  = new String(property.getProperty("baseUrl").getBytes("UTF-8"))
+      this.username = property.getProperty("username")
+      this.password = property.getProperty("password")
 
     } catch  {
       case e:Exception =>
@@ -49,6 +50,37 @@ class SVNManager {
     val authManager: ISVNAuthenticationManager = SVNWCUtil.createDefaultAuthenticationManager(username, password)
     repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(baseUrl))
     repository.setAuthenticationManager(authManager)
+
+    repository
+  }
+
+  /**
+   * == default repository will be trunk ==
+   *
+   * return subversion repository object
+   *
+   * @throws org.tmatesoft.svn.core.SVNException
+   * @return subversion repository object
+   */
+  @throws(classOf[SVNException])
+  def repository: SVNRepository = {
+    var _baseUrl: String = ""
+
+    val property: Properties = new Properties()
+    try {
+      if (System.getProperty("app.env.name") == "development") {
+        property.load(getClass().getResourceAsStream("/properties/dev-subversion.properties"))
+
+      } else {
+        property.load(getClass().getResourceAsStream("/properties/subversion.properties"))
+      }
+      _baseUrl = new String(property.getProperty("baseUrl").getBytes("UTF-8"))
+
+    } catch  {
+      case e:Exception =>
+        e.printStackTrace()
+    }
+    val repository: SVNRepository = getRepository(_baseUrl)
 
     repository
   }
