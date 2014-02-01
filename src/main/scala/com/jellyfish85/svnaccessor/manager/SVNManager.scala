@@ -91,8 +91,6 @@ class SVNManager {
    * @return
    */
   def diffClient: SVNDiffClient = {
-    var username: String = ""
-    var password: String = ""
     var baseUrl:  String = ""
 
     val property: Properties = new Properties()
@@ -104,8 +102,8 @@ class SVNManager {
         property.load(getClass().getResourceAsStream("/properties/subversion.properties"))
       }
 
-      username = property.getProperty("username")
-      password = property.getProperty("password")
+      this.username = property.getProperty("username")
+      this.password = property.getProperty("password")
       baseUrl  = new String(property.getProperty("baseUrl").getBytes("UTF-8"))
 
     } catch  {
