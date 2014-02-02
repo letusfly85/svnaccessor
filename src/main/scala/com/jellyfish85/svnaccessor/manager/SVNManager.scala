@@ -64,8 +64,6 @@ class SVNManager {
    */
   @throws(classOf[SVNException])
   def repository: SVNRepository = {
-    var _baseUrl: String = ""
-
     val property: Properties = new Properties()
     try {
       if (System.getProperty("app.env.name") == "development") {
@@ -74,13 +72,13 @@ class SVNManager {
       } else {
         property.load(getClass().getResourceAsStream("/properties/subversion.properties"))
       }
-      _baseUrl = new String(property.getProperty("baseUrl").getBytes("UTF-8"))
+      this.baseUrl = new String(property.getProperty("baseUrl").getBytes("UTF-8"))
 
     } catch  {
       case e:Exception =>
         e.printStackTrace()
     }
-    val repository: SVNRepository = getRepository(_baseUrl)
+    val repository: SVNRepository = getRepository(this.baseUrl)
 
     repository
   }

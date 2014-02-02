@@ -10,6 +10,7 @@ import org.apache.commons.io.{FilenameUtils, FileUtils}
 import java.text.SimpleDateFormat
 import java.io.{FileOutputStream, ByteArrayOutputStream, File}
 import java.util
+import org.tmatesoft.svn.core.internal.wc.admin.SVNEntry
 
 /**
  * == Over View ==
@@ -100,13 +101,17 @@ class SVNGetFiles[A <: SVNRequestBean] {
    */
   @throws(classOf[SVNException])
   def simpleGetFile(entity: SVNRequestBean, folder: File, removePath: String) {
-    println(repository.getLatestRevision)
+    //println(repository.getLatestRevision)
+
+    val entry: SVNDirEntry  = repository.info(".", -1)
+    val dirRevision: Long   = entry.getRevision
+    println(dirRevision)
 
     val out: ByteArrayOutputStream = new ByteArrayOutputStream()
     println(entity.path)
     repository.getFile(
       entity.path,
-      repository.getLatestRevision,
+      dirRevision,
       SVNProperties.wrap(java.util.Collections.EMPTY_MAP),
       out
     )
@@ -140,11 +145,14 @@ class SVNGetFiles[A <: SVNRequestBean] {
     }
 
     val headRevision: Long = repository.getLatestRevision
+    val entry: SVNDirEntry  = repository.info(".", -1)
+    val dirRevision: Long   = entry.getRevision
 
     list.foreach {entity: SVNRequestBean =>
       val out: ByteArrayOutputStream = new ByteArrayOutputStream()
       println(entity.path)
-      if (entity.revision == 0.toLong) entity.revision = headRevision
+      //if (entity.revision == 0.toLong) entity.revision = headRevision
+      if (entity.revision == 0.toLong) entity.revision = dirRevision
       repository.getFile(
         entity.path,
         entity.revision,
@@ -263,10 +271,14 @@ class SVNGetFiles[A <: SVNRequestBean] {
       FileUtils.forceMkdir(work)
     }
 
+    val entry: SVNDirEntry  = repository.info(".", -1)
+    val dirRevision: Long   = entry.getRevision
+
     val dirEntries:java.util.List[SVNDirEntry] = new java.util.ArrayList[SVNDirEntry]()
     repository.getDir(
       path,
-      repository.getLatestRevision,
+      //repository.getLatestRevision,
+      dirRevision,
       SVNProperties.wrap(java.util.Collections.EMPTY_MAP),
       dirEntries
     )
@@ -299,7 +311,8 @@ class SVNGetFiles[A <: SVNRequestBean] {
 
       repository.getFile(
         entity.path,
-        repository.getLatestRevision,
+        //repository.getLatestRevision,
+        dirRevision,
         SVNProperties.wrap(java.util.Collections.EMPTY_MAP),
         out
       )
@@ -355,10 +368,14 @@ class SVNGetFiles[A <: SVNRequestBean] {
     val simpleDateFormatHMS: SimpleDateFormat = new SimpleDateFormat("HHmmss")
 
     val headRevision = repository.getLatestRevision
+    val entry: SVNDirEntry  = repository.info(".", -1)
+    val dirRevision: Long   = entry.getRevision
+
     val dirEntries:java.util.List[SVNDirEntry] = new java.util.ArrayList[SVNDirEntry]()
     repository.getDir(
       path,
-      headRevision,
+      //headRevision,
+      dirRevision,
       SVNProperties.wrap(java.util.Collections.EMPTY_MAP),
       dirEntries
     )
@@ -409,13 +426,15 @@ class SVNGetFiles[A <: SVNRequestBean] {
     val simpleDateFormatHMS: SimpleDateFormat = new SimpleDateFormat("HHmmss")
 
     val headRevision: Long = repository.getLatestRevision
+    val entry: SVNDirEntry  = repository.info(".", -1)
+    val dirRevision: Long   = entry.getRevision
 
     list.foreach {bean: A =>
-
       try {
       val result: A = bean
 
-      val modifiedEntry: SVNDirEntry = repository.info(bean.path, headRevision)
+      //val modifiedEntry: SVNDirEntry = repository.info(bean.path, headRevision)
+      val modifiedEntry: SVNDirEntry = repository.info(bean.path, dirRevision)
       result.author    = modifiedEntry.getAuthor
       result.headRevision = headRevision
       result.revision  = modifiedEntry.getRevision
@@ -450,6 +469,8 @@ class SVNGetFiles[A <: SVNRequestBean] {
     var targetList: List[SVNRequestBean] = List()
 
     val headRevision: Long = repository.getLatestRevision
+    val entry: SVNDirEntry  = repository.info(".", -1)
+    val dirRevision: Long   = entry.getRevision
 
     val simpleDateFormatYMD: SimpleDateFormat = new SimpleDateFormat("yyyyMMdd")
     val simpleDateFormatHMS: SimpleDateFormat = new SimpleDateFormat("HHmmss")
@@ -459,9 +480,10 @@ class SVNGetFiles[A <: SVNRequestBean] {
       val result: SVNRequestBean = list.get(i)
       try {
 
-        val modifiedEntry: SVNDirEntry = repository.info(result.path, headRevision)
+        //val modifiedEntry: SVNDirEntry = repository.info(result.path, headRevision)
+        val modifiedEntry: SVNDirEntry = repository.info(result.path, dirRevision)
         result.author       = modifiedEntry.getAuthor
-        result.headRevision = headRevision
+        result.headRevision = dirRevision //headRevision
         result.revision     = modifiedEntry.getRevision
         result.fileName     = result.fileName
         result.commitYmd    = simpleDateFormatYMD.format(modifiedEntry.getDate)
