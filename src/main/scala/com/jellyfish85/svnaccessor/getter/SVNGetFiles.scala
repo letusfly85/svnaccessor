@@ -19,6 +19,19 @@ import java.util
  */
 class SVNGetFiles[A <: SVNRequestBean] {
 
+  val manager:    SVNManager    = new SVNManager
+  var repository: SVNRepository = manager.repository
+
+  /**
+   * set repository url to other
+   *
+   *
+   * @param _baseUrl
+   */
+  def reSetRepository(_baseUrl: String) {
+    this.repository = manager.getRepository(_baseUrl)
+  }
+
   /**
    * == Over View ==
    *
@@ -31,9 +44,6 @@ class SVNGetFiles[A <: SVNRequestBean] {
   @throws(classOf[SVNException])
   def simpleGetFiles(list: List[SVNRequestBean], folder: File) {
     FileUtils.cleanDirectory(folder)
-
-    val manager   : SVNManager     = new SVNManager
-    val repository: SVNRepository  = manager.repository
 
     list.foreach {entity: SVNRequestBean =>
       val out: ByteArrayOutputStream = new ByteArrayOutputStream()
@@ -90,8 +100,6 @@ class SVNGetFiles[A <: SVNRequestBean] {
    */
   @throws(classOf[SVNException])
   def simpleGetFile(entity: SVNRequestBean, folder: File, removePath: String) {
-    val manager   : SVNManager     = new SVNManager
-    val repository: SVNRepository  = manager.repository
     println(repository.getLatestRevision)
 
     val out: ByteArrayOutputStream = new ByteArrayOutputStream()
@@ -130,9 +138,6 @@ class SVNGetFiles[A <: SVNRequestBean] {
     if (cleanFlag) {
       FileUtils.cleanDirectory(folder)
     }
-
-    val manager   : SVNManager     = new SVNManager
-    val repository: SVNRepository  = manager.repository
 
     val headRevision: Long = repository.getLatestRevision
 
@@ -227,10 +232,6 @@ class SVNGetFiles[A <: SVNRequestBean] {
                               folder: String, path: String, level: Int,
                               obj: A, removePath: String
                                                ) {
-
-    val svn: SVNManager = new SVNManager
-    val repository = svn.repository
-
     def filter(bean: SVNRequestBean): Boolean = obj.filter(bean)
     simpleGetFilesRecursive(repository, folder, path, level, filter(_), removePath)
 
@@ -329,9 +330,6 @@ class SVNGetFiles[A <: SVNRequestBean] {
       path: String,
       simpleFilter: (SVNRequestBean => Boolean)
                   ): List[SVNRequestBean] = {
-    val manager: SVNManager = new SVNManager
-    val repository: SVNRepository = manager.repository
-
     val list: List[SVNRequestBean] = getSVNInfo(repository, path, simpleFilter)
 
     list
@@ -410,8 +408,6 @@ class SVNGetFiles[A <: SVNRequestBean] {
     val simpleDateFormatYMD: SimpleDateFormat = new SimpleDateFormat("yyyyMMdd")
     val simpleDateFormatHMS: SimpleDateFormat = new SimpleDateFormat("HHmmss")
 
-    val manager: SVNManager = new SVNManager
-    val repository: SVNRepository = manager.repository
     val headRevision: Long = repository.getLatestRevision
 
     list.foreach {bean: A =>
@@ -453,8 +449,6 @@ class SVNGetFiles[A <: SVNRequestBean] {
   def modifyAttribute2Current(list: util.ArrayList[SVNRequestBean]): util.ArrayList[SVNRequestBean] = {
     var targetList: List[SVNRequestBean] = List()
 
-    val manager: SVNManager = new SVNManager
-    val repository: SVNRepository = manager.repository
     val headRevision: Long = repository.getLatestRevision
 
     val simpleDateFormatYMD: SimpleDateFormat = new SimpleDateFormat("yyyyMMdd")
