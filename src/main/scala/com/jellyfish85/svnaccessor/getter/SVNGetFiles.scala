@@ -151,8 +151,8 @@ class SVNGetFiles[A <: SVNRequestBean] {
     list.foreach {entity: SVNRequestBean =>
       val out: ByteArrayOutputStream = new ByteArrayOutputStream()
       println(entity.path)
-      //if (entity.revision == 0.toLong) entity.revision = headRevision
-      if (entity.revision == 0.toLong) entity.revision = dirRevision
+      if (entity.revision == 0.toLong) entity.revision = headRevision
+      //if (entity.revision == 0.toLong) entity.revision = dirRevision
       repository.getFile(
         entity.path,
         entity.revision,
