@@ -7,12 +7,67 @@ import org.tmatesoft.svn.core.wc._
 import org.tmatesoft.svn.core.{SVNNodeKind, SVNDepth, SVNURL}
 
 import org.apache.commons.io.FilenameUtils
+import java.util
+
 
 /**
  *
  *
  */
 class SVNDiffGetter {
+
+  def _getDiffSummary(path1: String, revision1: Long, path2: String, revision2: Long): util.ArrayList[SVNDiffBean] = {
+    val list = getDiffSummary(path1, revision1, path2, revision2)
+
+    val ary: util.ArrayList[SVNDiffBean] = new util.ArrayList[SVNDiffBean]()
+    list.foreach(x => ary.add(x))
+
+    ary
+  }
+
+  /**
+   * get differences between two url by using path and revision
+   *
+   * @param path1
+   * @param revision1
+   * @param path2
+   * @param revision2
+   * @return
+   */
+  def getDiffSummary(path1: String, revision1: Long, path2: String, revision2: Long): List[SVNDiffBean] = {
+
+    val manager: SVNManager = new SVNManager
+    var diffList: List[SVNDiffBean] = List()
+    val status =
+      new ISVNDiffStatusHandler (){
+        def  handleDiffStatus (diffStatus: SVNDiffStatus) {
+
+          if (diffStatus.getKind == SVNNodeKind.FILE) {
+            val bean: SVNDiffBean = new SVNDiffBean
+
+            bean.directoryType    = diffStatus.getKind
+            bean.modificationType = diffStatus.getModificationType
+            bean.path             = diffStatus.getPath
+            bean.fileName         = FilenameUtils.getName(bean.path)
+
+            diffList ::= bean
+          }
+        }
+      }
+
+    val diffClient: SVNDiffClient = manager.diffClient
+    diffClient.doDiffStatus(
+      SVNURL.parseURIEncoded(path1),
+      SVNRevision.create(revision1),
+      SVNURL.parseURIEncoded(path2),
+      SVNRevision.create(revision2),
+      SVNDepth.INFINITY,
+      true,
+      status
+    )
+
+    shrink(diffList)
+  }
 
   /**
    *
