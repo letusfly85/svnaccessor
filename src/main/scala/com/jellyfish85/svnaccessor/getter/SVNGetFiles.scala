@@ -1,7 +1,7 @@
 package com.jellyfish85.svnaccessor.getter
 
 import com.jellyfish85.svnaccessor.manager.SVNManager
-import com.jellyfish85.svnaccessor.bean.{SVNDiffBean, SVNRequestBean}
+import com.jellyfish85.svnaccessor.bean.SVNRequestBean
 
 import org.tmatesoft.svn.core.io.SVNRepository
 import org.tmatesoft.svn.core.{SVNNodeKind, SVNDirEntry, SVNException, SVNProperties}
@@ -10,7 +10,6 @@ import org.apache.commons.io.{FilenameUtils, FileUtils}
 import java.text.SimpleDateFormat
 import java.io.{FileOutputStream, ByteArrayOutputStream, File}
 import java.util
-import org.tmatesoft.svn.core.internal.wc.admin.SVNEntry
 
 /**
  * == Over View ==
@@ -362,6 +361,7 @@ class SVNGetFiles[A <: SVNRequestBean] {
                          simpleFilter: (SVNRequestBean => Boolean)
                          ): List[SVNRequestBean] = {
 
+
     var resultSets: List[SVNRequestBean] = List()
 
     val simpleDateFormatYMD: SimpleDateFormat = new SimpleDateFormat("yyyyMMdd")
@@ -370,6 +370,7 @@ class SVNGetFiles[A <: SVNRequestBean] {
     val headRevision = repository.getLatestRevision
     val entry: SVNDirEntry  = repository.info(".", -1)
     val dirRevision: Long   = entry.getRevision
+    //println(repository.getLocation.toString + dirRevision.toString + "\t" + headRevision.toString)
 
     val dirEntries:java.util.List[SVNDirEntry] = new java.util.ArrayList[SVNDirEntry]()
     repository.getDir(
@@ -388,7 +389,8 @@ class SVNGetFiles[A <: SVNRequestBean] {
       bean.fileName = entry.getName
       bean.path     = new File(path,  entry.getRelativePath).getPath
       bean.path     = bean.path.replace('\\', '/')
-      bean.revision = entry.getRevision.asInstanceOf[Int]
+      //bean.revision = entry.getRevision.asInstanceOf[Int]
+      bean.revision  = headRevision
       bean.headRevision = headRevision
 
       bean.author    = entry.getAuthor
