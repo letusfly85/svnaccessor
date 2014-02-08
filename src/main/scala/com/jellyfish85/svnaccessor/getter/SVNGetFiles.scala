@@ -435,7 +435,8 @@ class SVNGetFiles[A <: SVNRequestBean] {
       try {
         val result: A = bean
 
-        val url: String = SVNURL.parseURIDecoded(bean.path).toString
+        val url: String = bean.path
+        println(url)
         val modifiedEntry: SVNDirEntry = repository.info(url, -1)
         //println(repository.getLocation.toString + "\t" + modifiedEntry.getKind)
 
@@ -453,7 +454,6 @@ class SVNGetFiles[A <: SVNRequestBean] {
       } catch {
         case e: NullPointerException =>
           println("[ERROR]" + bean.path)
-          //e.printStackTrace()
       }
     }
 
