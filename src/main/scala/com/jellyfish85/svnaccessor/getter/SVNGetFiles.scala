@@ -4,7 +4,7 @@ import com.jellyfish85.svnaccessor.manager.SVNManager
 import com.jellyfish85.svnaccessor.bean.SVNRequestBean
 
 import org.tmatesoft.svn.core.io.SVNRepository
-import org.tmatesoft.svn.core.{SVNNodeKind, SVNDirEntry, SVNException, SVNProperties}
+import org.tmatesoft.svn.core._
 import org.apache.commons.io.{FilenameUtils, FileUtils}
 
 import java.text.SimpleDateFormat
@@ -435,7 +435,8 @@ class SVNGetFiles[A <: SVNRequestBean] {
       try {
         val result: A = bean
 
-        val modifiedEntry: SVNDirEntry = repository.info(bean.path, -1)
+        val url: String = SVNURL.parseURIDecoded(bean.path)
+        val modifiedEntry: SVNDirEntry = repository.info(url, -1)
         //println(repository.getLocation.toString + "\t" + modifiedEntry.getKind)
 
         //val modifiedEntry: SVNDirEntry = repository.info(bean.path, dirRevision)
