@@ -427,24 +427,27 @@ class SVNGetFiles[A <: SVNRequestBean] {
     val simpleDateFormatYMD: SimpleDateFormat = new SimpleDateFormat("yyyyMMdd")
     val simpleDateFormatHMS: SimpleDateFormat = new SimpleDateFormat("HHmmss")
 
-    val headRevision: Long = repository.getLatestRevision
+    val headRevision: Long  = repository.getLatestRevision
     val entry: SVNDirEntry  = repository.info(".", -1)
     val dirRevision: Long   = entry.getRevision
 
     list.foreach {bean: A =>
       try {
-      val result: A = bean
+        val result: A = bean
 
-      //val modifiedEntry: SVNDirEntry = repository.info(bean.path, headRevision)
-      val modifiedEntry: SVNDirEntry = repository.info(bean.path, dirRevision)
-      result.author    = modifiedEntry.getAuthor
-      result.headRevision = headRevision
-      result.revision  = modifiedEntry.getRevision
-      result.fileName  = modifiedEntry.getName //bean.fileName
-      result.commitYmd = simpleDateFormatYMD.format(modifiedEntry.getDate)
-      result.commitHms = simpleDateFormatHMS.format(modifiedEntry.getDate)
+        val modifiedEntry: SVNDirEntry = repository.info(bean.path, -1)
+        //println(repository.getLocation.toString + "\t" + modifiedEntry.getKind)
 
-      resultSets ::= result
+        //val modifiedEntry: SVNDirEntry = repository.info(bean.path, dirRevision)
+        result.author       = modifiedEntry.getAuthor
+        result.headRevision = headRevision
+        result.revision     = modifiedEntry.getRevision
+        result.fileName     = modifiedEntry.getName
+        result.commitYmd    = simpleDateFormatYMD.format(modifiedEntry.getDate)
+        result.commitHms    = simpleDateFormatHMS.format(modifiedEntry.getDate)
+        result.comment      = modifiedEntry.getCommitMessage
+
+        resultSets ::= result
 
       } catch {
         case e: NullPointerException =>

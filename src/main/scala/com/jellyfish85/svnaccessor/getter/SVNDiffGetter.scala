@@ -38,6 +38,7 @@ class SVNDiffGetter {
 
     val manager: SVNManager = new SVNManager
     var diffList: List[SVNDiffBean] = List()
+    val baseUrl: String = manager.repository.getLocation.toString
     val status =
       new ISVNDiffStatusHandler (){
         def  handleDiffStatus (diffStatus: SVNDiffStatus) {
@@ -47,7 +48,8 @@ class SVNDiffGetter {
 
             bean.directoryType    = diffStatus.getKind
             bean.modificationType = diffStatus.getModificationType
-            bean.path             = diffStatus.getPath
+            bean.path             = path1.replace(baseUrl, "") + "/" + diffStatus.getPath
+            bean.url              = diffStatus.getURL.toString
             bean.fileName         = FilenameUtils.getName(bean.path)
 
             diffList ::= bean
@@ -66,7 +68,11 @@ class SVNDiffGetter {
       status
     )
 
-    shrink(diffList)
+    val _list = shrink(diffList)
+
+    val modifier = new SVNGetFiles[SVNDiffBean]
+    modifier.reSetRepository(path1)
+    modifier.modifyAttribute2Current(_list)
   }
 
   /**

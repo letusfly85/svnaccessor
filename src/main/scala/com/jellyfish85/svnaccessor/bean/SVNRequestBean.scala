@@ -16,6 +16,10 @@ class SVNRequestBean {
 
   var commitHms: String = _
 
+  var comment:   String = _
+
+  var url:       String = _
+
   var fileData: Array[Byte] = _
   var oldData:  Array[Byte] = _
 
