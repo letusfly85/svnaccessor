@@ -48,9 +48,17 @@ class SVNDiffGetter {
 
             bean.directoryType    = diffStatus.getKind
             bean.modificationType = diffStatus.getModificationType
-            bean.path             = path1.replace(baseUrl, "") + "/" + diffStatus.getPath
+            bean.path             = diffStatus.getURL.toString.replace(baseUrl, "")
             bean.url              = diffStatus.getURL.toString
             bean.fileName         = FilenameUtils.getName(bean.path)
+
+            /*
+            println("============================")
+            println("=")
+            println("=\t" + diffStatus.getURL.toString + "================")
+            println("=\t" + bean.path)
+            println("============================")
+            */
 
             diffList ::= bean
           }
@@ -71,7 +79,7 @@ class SVNDiffGetter {
     val _list = shrink(diffList)
 
     val modifier = new SVNGetFiles[SVNDiffBean]
-    modifier.reSetRepository(path1)
+    modifier.reSetRepository(path2)
     modifier.modifyAttribute2Current(_list)
   }
 

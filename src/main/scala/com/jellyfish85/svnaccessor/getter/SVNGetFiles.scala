@@ -452,7 +452,7 @@ class SVNGetFiles[A <: SVNRequestBean] {
       } catch {
         case e: NullPointerException =>
           println("[ERROR]" + bean.path)
-          e.printStackTrace()
+          //e.printStackTrace()
       }
     }
 
