@@ -435,7 +435,7 @@ class SVNGetFiles[A <: SVNRequestBean] {
       try {
         val result: A = bean
 
-        val url: String = SVNURL.parseURIDecoded(bean.path)
+        val url: String = SVNURL.parseURIDecoded(bean.path).toString
         val modifiedEntry: SVNDirEntry = repository.info(url, -1)
         //println(repository.getLocation.toString + "\t" + modifiedEntry.getKind)
 
