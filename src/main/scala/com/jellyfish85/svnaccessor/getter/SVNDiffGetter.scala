@@ -35,7 +35,6 @@ class SVNDiffGetter {
    * @return
    */
   def getDiffSummary(path1: String, revision1: Long, path2: String, revision2: Long): List[SVNDiffBean] = {
-    //todo check what information will be caught by SVNDiffClient's svn diff
 
     val manager: SVNManager = new SVNManager
     var diffList: List[SVNDiffBean] = List()
