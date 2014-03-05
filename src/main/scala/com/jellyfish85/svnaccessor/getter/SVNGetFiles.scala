@@ -488,20 +488,24 @@ class SVNGetFiles[A <: SVNRequestBean] {
 
         //val modifiedEntry: SVNDirEntry = repository.info(result.path, headRevision)
         val modifiedEntry: SVNDirEntry = repository.info(result.path, dirRevision)
-        result.author       = modifiedEntry.getAuthor
         result.headRevision = dirRevision //headRevision
-        result.revision     = modifiedEntry.getRevision
         result.fileName     = result.fileName
+
+        result.revision     = modifiedEntry.getRevision
+        result.author       = modifiedEntry.getAuthor
         result.commitYmd    = simpleDateFormatYMD.format(modifiedEntry.getDate)
         result.commitHms    = simpleDateFormatHMS.format(modifiedEntry.getDate)
 
-        targetList ::= result
+        //targetList ::= result
 
       } catch {
         case e: NullPointerException =>
           println("[ERROR]" + result.path)
+
           e.printStackTrace()
       }
+
+      targetList ::= result
     }
 
     val resultList: util.ArrayList[SVNRequestBean] = new util.ArrayList[SVNRequestBean]()
